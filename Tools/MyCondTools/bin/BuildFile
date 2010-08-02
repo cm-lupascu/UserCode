@@ -1,6 +1,0 @@
-<use name=CondCore/Utilities>			
-<bin file=cmscond_dumpBS.cpp name=cmscond_dumpBS>
-<use name=CondFormats/BeamSpotObjects>
-<use name=rootgraphics>
-<use name=rootcore>
-</bin>
