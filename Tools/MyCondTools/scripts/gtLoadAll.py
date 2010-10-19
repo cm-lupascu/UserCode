@@ -12,6 +12,12 @@ from datetime import datetime
 import shutil
 
 
+
+GTCRATIONAREA = "/afs/cern.ch/user/c/cerminar/Alca/GlobalTag/CMSSW_3_5_4/src"
+
+GTSQLITESTORE = "/afs/cern.ch/user/c/cerminar/public/Alca/GlobalTag"
+
+
 if __name__     ==  "__main__":
     
     # set the command line options
