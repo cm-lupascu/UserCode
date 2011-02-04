@@ -14,25 +14,30 @@ def modifyCommandForGT(command, gtName, isLocal):
     if command == None:
         return command
 
+
+    command = command.replace('EVENTS: 2000000', 'EVENTS: 200')
+    #print "COMMAND: " + command
+
     releasearea = os.environ["CMSSW_BASE"]
-    if 'CMSSW_3_8' in  releasearea :
-        conditionOpt = gtName + "::All,sqlite_file:/afs/cern.ch/user/c/cerminar/public/Alca/GlobalTag/" + gtName + ".db"
+    username = os.environ["USER"]
+    usernameinit = username[0]
+    if 'CMSSW_3_6' in  releasearea  or 'CMSSW_3_5' in  releasearea :
+        command = command.replace('auto:mc',gtName+"::All")
+        command = command.replace('auto:startup',gtName+"::All")
+        command = command.replace('auto:craft08',gtName+"::All")
+        command = command.replace('auto:craft09',gtName+"::All")
+        command = command.replace('auto:com10',gtName+"::All")
+        if isLocal and "cmsDriver" in command:
+            command = command + " --customise  Configuration/StandardSequences/customGT_" + gtName + ".py"
+
+    else:
+        conditionOpt = gtName + "::All,sqlite_file:/afs/cern.ch/user/" + usernameinit + "/" + username + "/public/Alca/GlobalTag/" + gtName + ".db"
         command = command.replace('auto:mc',conditionOpt)
         command = command.replace('auto:startup',conditionOpt)
         command = command.replace('auto:craft08',conditionOpt)
         command = command.replace('auto:craft09',conditionOpt)
         command = command.replace('auto:com10',conditionOpt)
         
-
-    else :
-        command = command.replace('auto:mc',gtName+"::All")
-        command = command.replace('auto:startup',gtName+"::All")
-        command = command.replace('auto:craft08',gtName+"::All")
-        command = command.replace('auto:craft09',gtName+"::All")
-        command = command.replace('auto:com10',gtName+"::All")
-
-        if isLocal and "cmsDriver" in command:
-            command = command + " --customise  Configuration/StandardSequences/customGT_" + gtName + ".py"
 
     return command
 
@@ -210,7 +215,7 @@ if __name__ == '__main__':
 
     np=4 # default: four threads
     releasearea = os.environ["CMSSW_BASE"]
-    if 'CMSSW_3_6' in  releasearea or 'CMSSW_3_5' in  releasearea :
+    if 'CMSSW_3_6' in  releasearea or 'CMSSW_3_7' in  releasearea :
         ret = runGTSelection(gts, globaltagsandWfIds, options.local, np, options.original, options.show)
     else:
         ret = runGTSelectionNew(gts, globaltagsandWfIds, options.local, np, options.original, options.show)
