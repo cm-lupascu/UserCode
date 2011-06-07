@@ -4,8 +4,10 @@ import os, sys, re, time
 
 import random
 from threading import Thread
-
-
+try:
+    from Configuration.PyReleaseValidation.WorkFlow import WorkFlow
+except ImportError:
+    print "ops..old API!"
 
 from runTheMatrix import *
 
@@ -14,42 +16,62 @@ def modifyCommandForGT(command, gtName, isLocal):
     if command == None:
         return command
 
-    releasearea = os.environ["CMSSW_BASE"]
-    if 'CMSSW_3_8' in  releasearea :
-        conditionOpt = gtName + "::All,sqlite_file:/afs/cern.ch/user/c/cerminar/public/Alca/GlobalTag/" + gtName + ".db"
-        command = command.replace('auto:mc',conditionOpt)
-        command = command.replace('auto:startup',conditionOpt)
-        command = command.replace('auto:craft08',conditionOpt)
-        command = command.replace('auto:craft09',conditionOpt)
-        command = command.replace('auto:com10',conditionOpt)
-        
 
-    else :
+    command = command.replace('EVENTS: 2000000', 'EVENTS: 200')
+    #print "COMMAND: " + command
+
+    releasearea = os.environ["CMSSW_BASE"]
+    username = os.environ["USER"]
+    usernameinit = username[0]
+    if 'CMSSW_3_6' in  releasearea  or 'CMSSW_3_5' in  releasearea :
         command = command.replace('auto:mc',gtName+"::All")
         command = command.replace('auto:startup',gtName+"::All")
         command = command.replace('auto:craft08',gtName+"::All")
         command = command.replace('auto:craft09',gtName+"::All")
         command = command.replace('auto:com10',gtName+"::All")
+        command = command.replace('auto:starthi',gtName+"::All")
 
         if isLocal and "cmsDriver" in command:
             command = command + " --customise  Configuration/StandardSequences/customGT_" + gtName + ".py"
+
+    else:
+        conditionOpt = gtName + "::All"
+        if isLocal:
+            conditionOpt += ",sqlite_file:/afs/cern.ch/user/" + usernameinit + "/" + username + "/public/Alca/GlobalTag/" + gtName + ".db"
+        command = command.replace('auto:mc',conditionOpt)
+        command = command.replace('auto:startup',conditionOpt)
+        command = command.replace('auto:craft08',conditionOpt)
+        command = command.replace('auto:craft09',conditionOpt)
+        command = command.replace('auto:com10',conditionOpt)
+        command = command.replace('auto:starthi',conditionOpt)
+        
 
     return command
 
 
 
 def duplicateWorkflowForGTTest(matrixreader, wfid, newwfid, gtName, isLocal=False):
-    
+    print "# of workflows in the matrix: " + str(len(matrixreader.workFlows))
 
-        for wf in matrixreader.workFlows:
-            if float(wfid) == float(wf.numId):
-                print "Duplicate workflow: " + wf.nameId + " for GT: " + gtName
-                if isLocal == False:
-                    newWfname = gtName + '_FRONTIER+' + wf.nameId
-                else:
-                    newWfname = gtName + '_LOCAL+' + wf.nameId
+    for wf in matrixreader.workFlows:
+        if float(wfid) == float(wf.numId):
+            print "Duplicate workflow: " + wf.nameId + " for GT: " + gtName
+            if isLocal == False:
+                newWfname = gtName + '_FRONTIER+' + wf.nameId
+            else:
+                newWfname = gtName + '_LOCAL+' + wf.nameId
+            if hasattr(wf, 'input'):
+                # this is the new version of the API (> 43X)
+                step2addition = ""
+                if wfid == '40':
+                    # don't genererate a sample in the acse of the HI workflow
+                    step2addition = " --himix  --process HIMIX --filein   /store/relval/CMSSW_3_9_7/RelValPyquen_ZeemumuJets_pt10_2760GeV/GEN-SIM-DIGI-RAW-HLTDEBUG/START39_V7HI-v1/0054/102FF831-9B0F-E011-A3E9-003048678BC6.root"
+                    
+                matrixreader.workFlows.append(WorkFlow(str(newwfid), newWfname, modifyCommandForGT(wf.cmdStep1,gtName, isLocal), modifyCommandForGT(wf.cmdStep2,gtName, isLocal) + step2addition, modifyCommandForGT(wf.cmdStep3,gtName, isLocal), modifyCommandForGT(wf.cmdStep4,gtName, isLocal), wf.input))
+            else:
+                # old versin of the API
                 matrixreader.workFlows.append(WorkFlow(str(newwfid), newWfname, modifyCommandForGT(wf.cmdStep1,gtName, isLocal), modifyCommandForGT(wf.cmdStep2,gtName, isLocal), modifyCommandForGT(wf.cmdStep3,gtName, isLocal), modifyCommandForGT(wf.cmdStep4,gtName, isLocal)))
-
+                                              
                                               
 
 
@@ -74,6 +96,8 @@ def runGTSelectionNew(gts, gtmap, isLocal, nThreads=4, original=False, show=Fals
         # print "about to duplicate: " + gt
         wfidtodup = gtmap[gt]
         # add the workflows for the test of the GT (local)
+        if wfidtodup == 40:
+            index = 40
         duplicateWorkflowForGTTest(mrd, wfidtodup, index, gt, isLocal) 
         if original:
             testList.append(wfidtodup)
@@ -210,7 +234,8 @@ if __name__ == '__main__':
 
     np=4 # default: four threads
     releasearea = os.environ["CMSSW_BASE"]
-    if 'CMSSW_3_6' in  releasearea or 'CMSSW_3_5' in  releasearea :
+
+    if 'CMSSW_3_6' in  releasearea or 'CMSSW_3_7' in  releasearea :
         ret = runGTSelection(gts, globaltagsandWfIds, options.local, np, options.original, options.show)
     else:
         ret = runGTSelectionNew(gts, globaltagsandWfIds, options.local, np, options.original, options.show)
