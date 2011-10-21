@@ -1,9 +1,0 @@
-0 /afs/cern.ch/user/f/fguatier/LumiDB/Lumi1.csvt
-0 /afs/cern.ch/user/f/fguatier/LumiDB/Lumi2.csvt
-0 /afs/cern.ch/user/f/fguatier/LumiDB/Lumi3.csvt
-#0 /afs/cern.ch/user/f/fguatier/LumiDB/Lumi4.csvt
-1 /afs/cern.ch/user/f/fguatier/LumiDB/Lumi1d.csvt
-1 /afs/cern.ch/user/f/fguatier/LumiDB/Lumi2d.csvt
-1 /afs/cern.ch/user/f/fguatier/LumiDB/Lumi3d.csvt
-#1 /afs/cern.ch/user/f/fguatier/LumiDB/Lumi4d.csvt
-#Dummy

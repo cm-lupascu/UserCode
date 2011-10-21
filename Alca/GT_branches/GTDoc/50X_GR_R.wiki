@@ -1,1 +1,0 @@
-| [[%LINKTOGTLIST%/?GlobalTag=GR_R_50_V0][GR_R_50_V0]] | %GREEN%50X%ENDCOLOR% %RED%(Not for prod.[[[#NOTENotProd][1]]])%ENDCOLOR% | To be used for data reprocessing. | As !GR_R_44_V6 with the following updates:<br> - migraet castor RecoParams to prod<br> - update reconstruction geometry. |
