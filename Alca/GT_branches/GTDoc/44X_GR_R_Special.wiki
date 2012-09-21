@@ -1,1 +1,0 @@
-| [[%LINKTOGTLIST%/?GlobalTag=GR_R_44_V15B][GR_R_44_V15B]] | %GREEN%44X%ENDCOLOR% | To be used for data reprocessing. | As !GR_R_44_V15 with the following updates:<br> - Backports kinks and bows to 2010 geometry. |

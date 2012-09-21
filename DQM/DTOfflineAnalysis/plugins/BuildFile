@@ -1,6 +1,0 @@
-<use name=DQM/DTOfflineAnalysis>
-<library file=plugins.cc name=DQMDTOfflineAnalysisPlugins>
- <flags EDM_PLUGIN=1>
-</library>
-
-

@@ -1,7 +1,0 @@
-
-<lcgdict>
-<class name="SimpleEvent"/>
-<class name="std::vector<SimpleEvent>"/>
-<class name="SimpleEventCollection"/>
-<class name="edm::Wrapper<SimpleEventCollection>" splitlevel="0"/>
-</lcgdict>
