@@ -1,6 +1,0 @@
-<use name=MySkims/MyFilters>
-<library file=plugins.cc name=MySkimsMyFiltersPlugins>
- <flags EDM_PLUGIN=1>
-</library>
-
-

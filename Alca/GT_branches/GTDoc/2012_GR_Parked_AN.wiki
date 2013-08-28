@@ -1,2 +1,0 @@
-| [[%LINKTOGTLIST%/?GlobalTag=FT_P_V42D_AN3][FT_P_V42D_AN3]] | %GREEN%>=533X%ENDCOLOR% | To be used for the analysis of parked data. | As !FT_P_V42D with the following updates:<br> - New btag and mistag Data/MC scale factors<br> - updated Fall12 JECs. |
-| [[%LINKTOGTLIST%/?GlobalTag=FT_P_V42D_AN4][FT_P_V42D_AN4]] | %GREEN%>=533X%ENDCOLOR% | To be used for the analysis of parked data. | As !FT_P_V42D_AN3 with the following updates:<br> - Fall12_V7 JECs.|

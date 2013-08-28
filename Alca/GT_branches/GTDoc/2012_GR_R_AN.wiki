@@ -1,2 +1,0 @@
-| [[%LINKTOGTLIST%/?GlobalTag=FT_53_V18_AN3][FT_53_V18_AN3]] | %GREEN% >= CMSSW_5_3_7_patch5%ENDCOLOR% | To be used for data reprocessing. | As !FT_53_V18 with the following updates:<br> - New btag and mistag Data/MC scale factors.<br> - New Jet Energy Corrections. |
-| [[%LINKTOGTLIST%/?GlobalTag=FT_53_V21_AN3][FT_53_V21_AN3]] | %GREEN% >= CMSSW_5_3_7_patch5%ENDCOLOR% | To be used for data reprocessing. | As !FT_53_V21 with the following updates:<br> - New btag and mistag Data/MC scale factors.<br> - New Jet Energy Corrections. |

@@ -1,9 +1,0 @@
-CondFormats/JetMETObjects                        V03-01-14
-JetMETCorrections/Modules                        V05-00-14
-JetMETCorrections/Algorithms                     V02-01-02
-
-
-
-
-
-

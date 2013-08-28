@@ -1,6 +1,0 @@
-<connectionlist>
- <connection name="oracle://cms_orcoff_prod/CMS_COND_31X_POPCONLOG">
-   <parameter name="user" value="CMS_COND_31X_POPCONLOG"/>
-   <parameter name="password" value="8B1M410RM1N0RC3SS4T"/>
- </connection>
-</connectionlist>

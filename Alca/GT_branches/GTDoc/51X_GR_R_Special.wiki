@@ -1,2 +1,0 @@
-| [[%LINKTOGTLIST%/?GlobalTag=GR_P_V28B][GR_P_V28B]] | %GREEN%52X%ENDCOLOR% | To be used for prompt data processing @ Tier0. | As !GR_P_V28 with the following updates:<br> - Ad hoc runInfo: Fix for wrong B values. |
-| [[%LINKTOGTLIST%/?GlobalTag=GR_P_V28A][GR_P_V28A]] | %GREEN%52X%ENDCOLOR% | To be used for prompt data processing @ Tier0. | As !GR_P_V28 with the following updates:. |

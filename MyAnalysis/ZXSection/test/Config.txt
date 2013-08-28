@@ -1,6 +1,0 @@
-InputDir: /data/Analysis/42X_BX_v0/
-OutputFile: ./MyAnalysis
-RootDir: evAnalyzer/data
-JobFile: ./test/Jobs.txt
-LumiDBPath: ./test/LumiDB.txt
-OutputLumi: 1932.4
