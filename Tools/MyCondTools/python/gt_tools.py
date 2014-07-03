@@ -109,6 +109,7 @@ def convertnodecollection(value):
 # python wrappers of cmscon commands
 def exportIov(connect, tag, destination, passwd=""):
     exportIovCommand = 'export TNS_ADMIN=/afs/cern.ch/cms/DB/conddb; cmscond_export_iov -s %s -t %s -d %s' % (connect, tag, destination)
+    #exportIovCommand = 'echo "export TNS_ADMIN=/afs/cern.ch/cms/DB/conddb; cmscond_export_iov -s %s -t %s -d %s"' % (connect, tag, destination)
     if passwd != 'None' and passwd != '':
         exportIovCommand += ' -P ' + passwd
     #print exportIovCommand
@@ -364,13 +365,13 @@ class GTEntry:
     def getTagInvetoryLine(self):
         outline = str
         if self._label != '':
-            outline = ' '+self._tag+'{pfn='+self._connstring+'/'+self._account+',objectname='+self._object+',recordname='+self._record+',labelname='+self._label+'}'
+            outline = ' '+self._tag+'{pfn='+self.pfn()+',objectname='+self._object+',recordname='+self._record+',labelname='+self._label+'}'
         else:
-            outline=' '+self._tag+'{pfn='+self._connstring+'/'+self._account+',objectname='+self._object+',recordname='+self._record+'}'
+            outline=' '+self._tag+'{pfn='+self.pfn()+',objectname='+self._object+',recordname='+self._record+'}'
         return outline
 
     def getTagTreeLine(self):
-        outline=' '+ self._leafnode+'{parent='+ self._parent+',tagname='+ self._tag+',pfn='+ self._connstring+'/'+ self._account+'}'
+        outline=' '+ self._leafnode+'{parent='+ self._parent+',tagname='+ self._tag+',pfn='+ self.pfn()+'}'
         return outline
 
     def rcdID(self):
@@ -452,6 +453,8 @@ class GTEntry:
         """
         Returns the full pfn (connection + account) string
         """
+        if '.db' in self._connstring:
+            return self._connstring
         return  self._connstring + "/" + self._account
 
 
