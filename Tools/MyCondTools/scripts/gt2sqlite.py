@@ -151,7 +151,7 @@ if __name__     ==  "__main__":
 
         if toBeExported:
             # export the tag from the source account to the target sqlite file
-            statandout = gtTools.exportIov("oracle://cms_orcon_adg/"+entry1.account(), entry1.tagName(),sqlite_name,passwdfile)
+            statandout = gtTools.exportIov(entry1.getOraclePfn(online=False), entry1.tagName(),sqlite_name,passwdfile)
             print 'Exporting tag', entry1
             if  statandout[0] != 0:
                 print "***Error exporting tag, quitting!"
