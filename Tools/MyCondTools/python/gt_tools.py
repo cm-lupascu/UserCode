@@ -107,21 +107,22 @@ def convertnodecollection(value):
 
 
 # python wrappers of cmscon commands
-def exportIov(connect, tag, destination, passwd=""):
-    exportIovCommand = 'export TNS_ADMIN=/afs/cern.ch/cms/DB/conddb; cmscond_export_iov -s %s -t %s -d %s' % (connect, tag, destination)
+def exportIov(connect, tag, destination, passwd="",silent=False):
+    exportIovCommand = 'export TNS_ADMIN=/afs/cern.ch/cms/DB/conddb; cmscond_export_iov -l sqlite_file:exportLog.db -s %s -t %s -d %s' % (connect, tag, destination)
     #exportIovCommand = 'echo "export TNS_ADMIN=/afs/cern.ch/cms/DB/conddb; cmscond_export_iov -s %s -t %s -d %s"' % (connect, tag, destination)
     if passwd != 'None' and passwd != '':
         exportIovCommand += ' -P ' + passwd
     #print exportIovCommand
     statusAndOutput = commands.getstatusoutput(exportIovCommand)
-    if statusAndOutput[0] != 0:
-        print warning("Warning") + ": exportIov for tag: " + tag + " failed!"
-        print exportIovCommand
-        print statusAndOutput[1]
+    if not silent:
+        if statusAndOutput[0] != 0:
+            print warning("Warning") + ": exportIov for tag: " + tag + " failed!"
+            print exportIovCommand
+            print statusAndOutput[1]
 
     return statusAndOutput
 
-def listIov(connect, tag, passwd):
+def listIov(connect, tag, passwd,silent=False):
     """
     Interface to cmscond_list_iov command
     """
@@ -132,10 +133,11 @@ def listIov(connect, tag, passwd):
     if passwd != 'None' and passwd != '':
         listiovCommand = listiovCommand + ' -P ' + passwd
     statusAndOutput = commands.getstatusoutput(listiovCommand)
-    if statusAndOutput[0] != 0:
-        print warning("Warning") + ": listiov for tag: " + tag + " failed!"
-        print listiovCommand
-        print statusAndOutput[1]
+    if not silent:
+        if statusAndOutput[0] != 0:
+            print warning("Warning") + ": listiov for tag: " + tag + " failed!"
+            print listiovCommand
+            print statusAndOutput[1]
 
     return statusAndOutput
 
