@@ -11,12 +11,13 @@ from Tools.MyCondTools.RunInfo import *
 import Tools.MyCondTools.RunRegistryTools as RunRegistryTools
 import Tools.MyCondTools.tier0WMADasInterface as tier0DasInterface
 import Tools.MyCondTools.pclMonitoringTools as pclMonitoringTools
+# import Tools.MyCondTools.monitoring_tools as pclMonitoringTools
 import Tools.MyCondTools.gt_tools as gtTools
 
 import Tools.MyCondTools.monitoring_config as config
 import Tools.MyCondTools.RunInfo as RunInfo
 
-
+# import pdb; pdb.set_trace()
 
 import shutil
 
@@ -177,7 +178,7 @@ def runBackEnd():
         if len(cachedRuns) != 0:
             cachedRuns.sort()
         else:
-            cachedRuns.append(firstRunToMonitor)
+            cachedRuns.append(config.firstRunToMonitor)
 
 
         # get the list of runs to be refreshed (< 24h old)
@@ -238,7 +239,11 @@ def runBackEnd():
             print "Accessing runInfo...may take a while..."
             runInfoList = None
             try:
-                runInfoList = RunInfo.getRunInfoStartAndStopTime(config.runInfoTag_stop, config.runInfoConnect, runList[len(runList)-1], runList[0])
+                runInfoList = RunInfo.getRunInfoStartAndStopTime(
+                    config.runInfoTag_stop,
+                    config.runInfoConnect,
+                    runList[len(runList)-1], runList[0],
+                    passwdFile=config.passwdfile)
             except Exception as error:
                 print "*** Error can not query run-info for runs between: " + str(runList[0]) + " and " + str(runList[len(runList)-1]) + " error: " + str(error)
                 raise Exception("Error can not query run-info for runs between: " + str(runList[0]) + " and " + str(runList[len(runList)-1]) + " error: " + str(error))
@@ -258,7 +263,11 @@ def runBackEnd():
             if len(matches) == 0:
                 # try to get the payload from runinfo_start: this run might still be ongoing
                 try:
-                    runInfo = RunInfo.getRunInfoStartAndStopTime(config.runInfoTag_start, config.runInfoConnect, run, run)
+                    runInfo = RunInfo.getRunInfoStartAndStopTime(
+                        config.runInfoTag_start,
+                        config.runInfoConnect,
+                        run, run,
+                        passwdFile=config.passwdfile)
                 except Exception as error:
                     print "*** Error can not query run-info for run: " + str(run) + " error: " + str(error)
                     raise Exception("Error can not query run-info for run: " + str(run) + " error: " + str(error))

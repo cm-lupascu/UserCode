@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+import os
 import Tools.MyCondTools.monitoring_config as config
 
 
@@ -10,7 +10,7 @@ writeToWeb             = True
 
 class WebPageWriter:
     def __init__(self):
-        self._fineName ="./index.html"
+        self._fineName ="/index.html"
         self._title = "Monitoring of Prompt Calibration Loop"
         self._version = "3.0"
         self._nRunsInPlot = 100
@@ -366,7 +366,8 @@ def producePlots(pclTag, runReports, nRunsToPlot, maxtimeEnd, maxtimeBegin, aver
     newlegend.Draw("same")
     plotName = 'cHisto_' + pclTag + '.png'
     if writeToWeb:
-        c4.Print(config.webArea + plotName)
+        plot_path = os.path.join(config.webArea, plotName)
+        c4.Print(plot_path)
 
 
     return plotName
@@ -445,9 +446,9 @@ if __name__ == "__main__":
                     if rRep.latencyUploadFromStart > maxDelayFromStart:
                         maxDelayFromStart = rRep.latencyUploadFromStart
 
-        avgJobFromEnd = avgJobFromEnd/nJobRun
-        avgUploadFromEnd = avgUploadFromEnd/nUploads
-        avgUploadFromStart = avgUploadFromStart/nUploads
+        # avgJobFromEnd = avgJobFromEnd/nJobRun
+        # avgUploadFromEnd = avgUploadFromEnd/nUploads
+        # avgUploadFromStart = avgUploadFromStart/nUploads
 
         # FIXME: review the parameters
         plotName = producePlots(pclTag,\

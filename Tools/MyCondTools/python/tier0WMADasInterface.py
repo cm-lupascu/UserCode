@@ -14,12 +14,11 @@ Author: G.Cerminara
 """
 
 
-
 class Tier0DasInterface:
     """
     Class handling common Tier0-DAS queries and connected utilities
     """
-    def __init__(self, url = 'https://samir-wmcore.cern.ch/t0wmadatasvc/replay/'):
+    def __init__(self, url = 'https://cmsweb.cern.ch/t0wmadatasvc/prod/'):
         """
         Need base url for Tier0-DAS as input
         """
@@ -28,15 +27,15 @@ class Tier0DasInterface:
         self._debug = False
         self._retry = 0
         self._maxretry = 5
-        
-    def getData(self, src, tout = 5, proxy = None ):
+
+    def getData(self, src, tout=5, proxy=None):
         """
         Get the JSON file for a give query specified via the Tier0-DAS url.
         Timeout can be set via paramter.
         """
         # actually get the json file from the given url of the T0-Das service
         # and returns the data
-        
+
         try:
             if proxy:
                 print "setting proxy"
@@ -85,7 +84,7 @@ class Tier0DasInterface:
             jsonText = jsonCall.read()
             data = json.loads(jsonText)
             if self._debug:
-                print "data:",data
+                print "data:", data
             return data
 
     def getResultList(self, json):
@@ -95,11 +94,11 @@ class Tier0DasInterface:
         resultList = []
         #FIXME try
         resultList = json['result']
-        
+
         #print self.getValues(json, 'result')
         return resultList
 
-    def getValues(self, json, key, selection = ''):
+    def getValues(self, json, key, selection=''):
         """
         Extract the value corrisponding to a given key from a JSON file. It is also possible to apply further selections.
         """
@@ -114,7 +113,7 @@ class Tier0DasInterface:
             #print o
             try:
                 if check == 1:
-                    if (o[k] == v): 
+                    if (o[k] == v):
                         data.append(o[key])
                 else:
                     data.append(o[key])
@@ -148,7 +147,6 @@ class Tier0DasInterface:
             print "[Tier0DasInterface::lastPromptRun] error"
             raise
             return 0
-
 
     def firstConditionSafeRun(self):
         """
@@ -188,15 +186,7 @@ class Tier0DasInterface:
             return None
 
 
-    
-
-
 if __name__ == "__main__":
-
-
-
-
-    
     test = Tier0DasInterface()
 
     if True:
@@ -205,7 +195,6 @@ if __name__ == "__main__":
         except Exception as error:
             print 'Error 1'
             print error
-
 
     if True:
         try:

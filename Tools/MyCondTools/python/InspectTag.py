@@ -21,7 +21,7 @@ $Revision: 1.3 $
 
 
 
-def getSummaries(tagName, dbName, since, till, logName = 'oracle://cms_orcon_adg/CMS_COND_31X_POPCONLOG', passwdFile = '/afs/cern.ch/cms/DB/conddb/ADG'):
+def getSummaries(tagName, dbName, since, till, logName = 'oracle://cms_orcon_adg/CMS_COND_31X_POPCONLOG', passwdFile = '/afs/cern.ch/cms/DB/conddb'):
     """
     Get the summaries for a given IOV range using the py-wrappers
     """
@@ -30,13 +30,14 @@ def getSummaries(tagName, dbName, since, till, logName = 'oracle://cms_orcon_adg
     try:
         fwkInc = condDB.FWIncantation()
         rdbms = condDB.RDBMS(passwdFile)
-        rdbms.setLogger(logName)
+        # rdbms.setLogger(logName)
+        # import pdb; pdb.set_trace()
 
-        db = rdbms.getDB(dbName)
+        db = rdbms.getReadOnlyDB(dbName)
 
 
-        db.startTransaction()
-        log = db.lastLogEntry(tagName)
+        db.startReadOnlyTransaction()
+        #log = db.lastLogEntry(tagName)
         iovs = iovInspector.Iov(db,tagName, since,till)
         db.commitTransaction()
     except Exception:
@@ -56,7 +57,7 @@ def getSummaries(tagName, dbName, since, till, logName = 'oracle://cms_orcon_adg
 
 
 if __name__ == "__main__":
-    getSummaries(tagName = "SiStripDetVOff_v6_prompt",\
+    print getSummaries(tagName = "SiStripDetVOff_v6_prompt",\
                  dbName = "oracle://cms_orcon_adg/CMS_COND_31X_STRIP",\
                  since = 5813170907986667904,\
                  till = 5813170907986667904)
