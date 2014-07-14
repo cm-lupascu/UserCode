@@ -3,6 +3,8 @@ import commands
 import os
 import datetime
 from ROOT import *
+from dbs.apis.dbsClient import DbsApi
+import Tools.MyCondTools.dbsApiTry as api
 
 """
 Module providing utils for the monitoring of AlcaReco production
@@ -204,30 +206,45 @@ def dbsQueryRunList(dataset, minRun = 1, maxRun = -1):
 def dbsQueryMinRun(dataset):
     """
     Query DBS for the minimum run number in the dataset
-    """
     dbs_cmd = 'dbs search --noheader --query="find min(run) where dataset=' + dataset
     dbs_cmd += '"'
+    
     #print dbs_cmd
     dbs_out = commands.getstatusoutput(dbs_cmd)
     return dbs_out
-
+    """
+    runs = api.listRuns(dataset=dataset)[0]
+    return min(runs.get("run_num"))
+    
 
 def dbsQuery(dataset, minRun = 1, maxRun = -1):
     """
     Query DBS to ge the list of runs and the # of events for each run
-    """
+   
     dbs_cmd = 'dbs search --noheader --query="find run,sum(file.numevents) where dataset=' + dataset
     if minRun > 1:
         dbs_cmd += ' and run > ' + str(minRun)
     if maxRun != -1:
         dbs_cmd += ' and run < ' + str(maxRun)
-        
-    dbs_cmd += '"'
+    """
+       
+    """dbs_cmd += '"'
     #print dbs_cmd
     dbs_out = commands.getstatusoutput(dbs_cmd)
-    return dbs_out
+    return dbs_out"""
 
-
+    dlist = ""
+    runs = api.listRuns(dataset=dataset)[0].get("run_num")
+    for run in runs:
+       
+        dlist += str(run)
+        events = api.listFileSummaries(dataset=dataset, run_num = run)[0]
+        #dlist.append(run)
+        dlist += " "  + str(events.get("num_event"))
+        dlist += "\n"   
+    return dlist
+    
+    
 class DBSAlCaRecoRunInfo():
     """
     Stores the information for each run of a given dataset and computes the efficiencyof the selection.
@@ -330,11 +347,13 @@ class DBSAlCaRecoResults():
         lines = queryOut.split("\n")
         #print len(lines)
         for line in lines:
-            #print line
+            print line
             if line != "":
                 alcaRun = DBSAlCaRecoRunInfo()
                 alcaRun.setFromQuery(line)
                 self._infoPerRun.append(alcaRun)
+                
+                
 
     def printAll(self):
         self.sort()
@@ -410,6 +429,8 @@ class DBSAlCaRecoResults():
         tableForCache.append(["# run", "# events", "# events parent"])
         for rrep in self._infoPerRun:
             tableForCache.append(rrep.getList())
+            print "======= LIST========"
+            print rrep.getList()
             
         cacheFile = file(cacheFileName,"w")
         tableWriter.pprint_table(cacheFile, tableForCache)
@@ -485,19 +506,18 @@ def getDatasets(pd, epoch, version, tier):
     """
     Query DBS to find all the datasets for a given PD/Epoch/version/datatier set
     """
-    dbs_cmd = 'dbs search --noheader --query="find dataset where dataset=/' + pd + '/' + epoch + '-*' + version + '/' + tier +'"'
-    print dbs_cmd
-    dbs_out = commands.getstatusoutput(dbs_cmd)
-    listofgroups = dbs_out[1].split("\n")
+    dataset = "/" + pd + '/' + epoch + '-*' + version + '/' + tier 
+    dbs_out = api.listDatasets(dataset = dataset)
+   
+    # get resulted datasets    
     listforret = []
-    for dataset in listofgroups:
+    for dataset in dbs_out:
         if dataset == "":
             continue
-        print dataset
-        versionpart = dataset.split("/")[2]
+        versionpart = dataset.get("dataset").split("/")[2]
         components = versionpart.split("-")
         if len(components) <= 3:
-            listforret.append(dataset)
+            listforret.append(dataset.get("dataset"))
         else:
             theepoch = components[0]
             # new version for WMA dataser names
@@ -506,7 +526,7 @@ def getDatasets(pd, epoch, version, tier):
             # theversion = components[len(components)-2] + "-" +  components[len(components)-1]
             #print theversion
             if theversion == version:
-                listforret.append(dataset)
+                listforret.append(dataset.get("dataset"))
     return listforret
 
 
@@ -529,9 +549,12 @@ class AlcaRecoDatasetJson:
         
     def writeJsonFile(self):
         filename =  self._name + ".json"
+        print "filename ==== " + filename
         # get a string with JSON encoding the list
         #dthandler = lambda obj: obj.isoformat() if isinstance(obj, datetime.datetime) else None
+        print "CURRENT DIR: "   + os.getcwd()
         dump = json.dumps(self._datasetMap)
+         #Uncomment the following after getting permissions 
         file = open(filename, 'w')
         file.write(dump + "\n")
         file.close()
@@ -546,6 +569,6 @@ class AlcaRecoDatasetJson:
         dataMap = self._datasetMap[dataset]
         details = AlcaRecoDetails(dataMap["dataset"], dataMap["pd"], dataMap["epoch"], dataMap["version"])
         return details
-
+        
     def getDatasets(self):
         return self._datasetMap.keys()

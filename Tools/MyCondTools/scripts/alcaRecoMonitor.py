@@ -6,8 +6,7 @@ import sys
 from ConfigParser import ConfigParser
 
 import Tools.MyCondTools.RunRegistryTools as RunRegistryTools
-import Tools.MyCondTools.alcaRecoMonitoringTools as alcaRecoMonitoringTools
-
+import Tools.MyCondTools.alcaRecoMonitoringToolsTest as alcaRecoMonitoringToolsTest
 #from Tools.MyCondTools.RunValues import *
 
 
@@ -46,7 +45,7 @@ if __name__ == "__main__":
 
 
 
-    # 1 find all the alcarecos and theyr parets for each "group"
+    # 1 find all the alcarecos and their parents for each "group"
     for group in groups:
         if group == "":
             continue
@@ -58,10 +57,13 @@ if __name__ == "__main__":
         epoch = configfile.get(group, 'epoch')
         version = configfile.get(group, 'version')
         rawversion = configfile.get(group, 'rawversion')
+        print "==== Epoch: " + epoch
+        print "==== Version: " + version
+        print "==== RawV: " + rawversion
 
         # look for ALCARECO dataserts matching this "group" in DBS
-        jsonDatasetList = alcaRecoMonitoringTools.AlcaRecoDatasetJson(group)
-        datasets = alcaRecoMonitoringTools.getDatasets("*",epoch, version, "ALCARECO")
+        jsonDatasetList = alcaRecoMonitoringToolsTest.AlcaRecoDatasetJson(group)
+        datasets = alcaRecoMonitoringToolsTest.getDatasets("*",epoch, version, "ALCARECO")
         # for all datasets look for the parent
         for dataset in datasets:
             pd = dataset.split("/")[1]
@@ -70,7 +72,7 @@ if __name__ == "__main__":
             if group == "Run2011A-v4":
                 parenttier = "RAW"
             pdforhtml = pd
-            details = alcaRecoMonitoringTools.AlcaRecoDetails(dataset, pdforhtml, epoch, version)
+            details = alcaRecoMonitoringToolsTest.AlcaRecoDetails(dataset, pdforhtml, epoch, version)
             if pd == 'StreamExpressCosmics':
                 continue
             jsonDatasetList.addDataset(dataset, details)
@@ -80,15 +82,15 @@ if __name__ == "__main__":
             if pd == 'StreamHIExpress':
                 pd = 'HIExpressPhysics'
                 parenttier = "FEVT"
-            parent = alcaRecoMonitoringTools.getDatasets(pd,epoch, version, parenttier)
+            parent = alcaRecoMonitoringToolsTest.getDatasets(pd,epoch, version, parenttier)
             # filter out RECO datasets which are not the right ones
-            parent = filter(alcaRecoMonitoringTools.PDFilterOutPromptSkim, parent)
+            parent = filter(alcaRecoMonitoringToolsTest.PDFilterOutPromptSkim, parent)
             if len(parent) == 0 or parent[0] == '':
-                parent = alcaRecoMonitoringTools.getDatasets(pd,epoch, rawversion,"RAW")
+                parent = alcaRecoMonitoringToolsTest.getDatasets(pd,epoch, rawversion,"RAW")
             print "--------------------------------------------"
             print "dataset: " + dataset
             print "parent: " + parent[0]
-            alcarecoDatasets.append(alcaRecoMonitoringTools.DBSAlCaRecoResults(dataset, parent[0]))
+            alcarecoDatasets.append(alcaRecoMonitoringToolsTest.DBSAlCaRecoResults(dataset, parent[0]))
         jsonDatasetList.writeJsonFile()
 
 
@@ -106,7 +108,7 @@ if __name__ == "__main__":
         lastCached = dataset.readCache() #FIXME
         print "  last cached run: " + str(lastCached)
         if lastCached == 1:
-            minRunDBS = int(alcaRecoMonitoringTools.dbsQueryMinRun(dataset.name())[1])
+            minRunDBS = alcaRecoMonitoringToolsTest.dbsQueryMinRun(dataset.name())
             print " no cache found...get the first run from DBS: " + str(minRunDBS)
             lastCached = minRunDBS
             
@@ -130,12 +132,13 @@ if __name__ == "__main__":
             #cachedlist = getRunList(1, rrSet)
             cachedlist = RunRegistryTools.getRunListRR3(lastCached, "Online", cachedlisttype)
             cachedlist.sort()
-            print cachedlist
-            runList = cachedlist            
+            runList = cachedlist         
             print "RR: " + rrSet + " # runs: " + str(len(runList))
-            #print runList
+            # print runList
 
-
+            print "======== Cached list ==========="
+            print cachedlist
+            print "================================="
             # FIXME: max run (used to limit the size of the query)
             minRun = cachedlist[0]
             maxRun = minRun
@@ -145,25 +148,15 @@ if __name__ == "__main__":
             else:
                 maxRun = maxRun + 500
             print "min: " + str(minRun) + " max: " + str(maxRun)
-            query = alcaRecoMonitoringTools.dbsQuery(dataset.name(), minRun, maxRun)
-            if query[0] != 0:
-                print query[1]
-            else:
-                dataset.appendQuery(query[1])
-            queryParent = alcaRecoMonitoringTools.dbsQuery(dataset.parent(), minRun, maxRun)
-            if queryParent[0] != 0:
-                print queryParent[1]
-            else: 
-                dataset.addParentQuery(queryParent[1])
-
-
-
+            query = alcaRecoMonitoringToolsTest.dbsQuery(dataset.name(), minRun, maxRun)
+            dataset.appendQuery(query)
+            queryParent = alcaRecoMonitoringToolsTest.dbsQuery(dataset.parent(), minRun, maxRun)
+            dataset.addParentQuery(queryParent)
 
                 
-
             dataset.purgeList(runList)
-
-
+           
+           
             dataset.printAll()
             dataset.writeCache()
 
